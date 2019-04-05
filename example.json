@@ -1,0 +1,65 @@
+{
+        "name": "Example Rules",
+        "version": "v1.0",
+        "author": "Truong Kien Tuong",
+        "rules": {
+                "S": [
+                        {
+                                "production": [
+                                        "a",
+                                        {
+                                                "non_term": "S1"
+                                        },
+                                        "b"
+                                ],
+                                "type": "nonfinal"
+                        },
+                        {
+                                "production": [
+                                        "a",
+                                        {
+                                                "non_term": "S2"
+                                        },
+                                        "bb"
+                                ],
+                                "type": "nonfinal"
+                        }
+                ],
+                "S1": [
+                        {
+                                "production": [
+                                        "ab"
+                                ],
+                                "type": "final"
+                        },
+                        {
+                                "production": [
+                                        "a",
+                                        {
+                                                "non_term": "S1"
+                                        },
+                                        "b"
+                                ],
+                                "type": "nonfinal"
+                        }
+                ],
+                "S2": [
+                        {
+                                "production": [
+                                        "abb"
+                                ],
+                                "type": "final"
+                        },
+                        {
+                                "production": [
+                                        "a",
+                                        {
+                                                "non_term": "S2"
+                                        },
+                                        "bb"
+                                ],
+                                "type": "nonfinal"
+                        }
+                ]
+        }
+}

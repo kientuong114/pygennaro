@@ -1,0 +1,17 @@
+#This is an example file
+
+#Comments start with "#": these lines, along with empty lines, will be ignored
+#The format is typical of the Backus-Naur form. For example:
+#Left-hand side::="First production"|"Second "<any non terminal character>"production"|"Third production"
+#The number of production is variable and can be indefinitely large. Each production must be separated by a "|" character (This can be changed in the bnf_to_json.py file)
+#Note that the left-hand side does not have quotes around, while terminal pieces of the production must be sorrounded by double quotes.
+#Non terminal pieces must be sorrounded by angled brackets.
+
+#To convert to json give the following arguments in the command, following the script name:
+#OUTPUT_FILE, NAME_OF_GRAMMAR (Can be anything you like), VERSION (same as before), AUTHOR
+
+#This example generates the language {a^n b^n|n>=1} U {a^n b^(2n)|n>=1}
+
+S::="a"<S1>"b"|"a"<S2>"bb"
+S1::="ab"|"a"<S1>"b"
+S2::="abb"|"a"<S2>"bb"
