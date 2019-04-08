@@ -1,4 +1,4 @@
-#Context-Free Grammar Generator
+# Context-Free Grammar Generator
 
 This small script takes in a json with a context-free grammar rules and returns a random string generated from that grammar
 
