@@ -7,29 +7,17 @@
 #                                          #
 ############################################
 
-# SHORT PREAMBLE ABOUT GRAMMARS
-# Formally, a grammar is a tuple (T,N,S,P) where:
-# T is an alphabet of (T)erminal characters
-# N is an alphabet of (N)on-terminal characters
-# S is called "Axiom" and is the starting point of the string generation. S belongs to N
-# P is a set of rules called (P)roductions.
-# A production has the form A->B, where A is referred to as "left-hand side" and B as "right-hand side" of the production
-# In a context free grammar, A is composed of a single non-terminal character and B can be any string composed of Terminal and Non-Terminal characters
-# A grammar generates strings by replacing non-terminal characters that match the left-hand side of a production with the relative right-hand side.
-# When the string is entirely composed of terminal characters, the generation stops and the resulting string is one of the many possible strings contained in
-# the language that the grammar can produce.
-
 import json
 import random
 from functools import reduce
 from math import exp
 
 #Set here the file from which the grammar productions are loaded
-RULES_FILE = "example.json"
+RULES_FILE = "customrules/fulvio.json"
 
 #Some constants
 MAX_LENGTH = 3000
-MIN_LENGTH = 10
+MIN_LENGTH = 100
 MAX_RECURSION_DEPTH = 30
 
 #The character used to separate the various terminal characters after the string is finally generated. Can be the empty string "".
@@ -101,7 +89,7 @@ def generate():
             while index < len(stringGen):
                 if type(stringGen[index])==dict:
                     number = random.random()
-                    if number < 1-exp(float(current_length)/float(MAX_LENGTH)-1):
+                    if number < exp(-1*float(current_length)/(200*float(MAX_LENGTH)))/200:
                         #Requests a non-terminal production
                         stringGen[index:index] = getProductions(stringGen.pop(index)['non_term'], "nonfinal")['production']
                     else:
@@ -114,11 +102,14 @@ def generate():
 def debugGenerate():
     #Checks the average length of the generated strings
     tot = 0
+    currmax = 0
     for i in range(10000):
         result = str(generate())
+        currmax = max(currmax, len(result))
         print(result)
         tot += len(result)
-    print("Average length: ", tot , float(tot)/10000)
+    print("Average length: ", float(tot)/10000)
+    print("Max length: ", currmax)
 
 def printInfo():
     #Preliminary informations
@@ -133,5 +124,5 @@ def printInfo():
             print(production['production'])
 
 #printInfo()
-print(generate())
-#debugGenerate()
+#print(generate())
+debugGenerate()
