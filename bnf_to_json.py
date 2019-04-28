@@ -17,8 +17,11 @@ result = {
 #Reads all lines from input and splits between the left-hand side and the right-hand side
 bnf_content = [line.split("::=") for line in list(filter(lambda x: x[0]!="#", list(filter(lambda x: len(x)!=0, [line.strip('\n') for line in open(BNF_FILE)]))))]
 
+print(bnf_content)
+
 #Splits all the lines with the separator
 for production in bnf_content:
+    print(production)
     production[1] = production[1].split(SEPARATOR_CHAR)
 
 #Initializes the rules dict

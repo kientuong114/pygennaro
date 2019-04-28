@@ -13,11 +13,11 @@ from functools import reduce
 from math import exp
 
 #Set here the file from which the grammar productions are loaded
-RULES_FILE = "customrules/fulvio.json"
+RULES_FILE = "gio.json"
 
 #Some constants
 MAX_LENGTH = 3000
-MIN_LENGTH = 100
+MIN_LENGTH = 10
 MAX_RECURSION_DEPTH = 30
 
 #The character used to separate the various terminal characters after the string is finally generated. Can be the empty string "".
@@ -43,9 +43,11 @@ def getProductions(non_term, isFinal="NULL"):
         if non_term == key:
                 select = random.choice(rules)
                 if isFinal == "NULL" or nonTermExists == False:
+                    #print("Selected: ", select)
                     return select
                 while select['type'] != isFinal:
                     select = random.choice(rules)
+                #print("Selected: ", select)
                 return select
 
 def stringGenerate(stringArray):
@@ -89,11 +91,13 @@ def generate():
             while index < len(stringGen):
                 if type(stringGen[index])==dict:
                     number = random.random()
-                    if number < exp(-1*float(current_length)/(200*float(MAX_LENGTH)))/200:
+                    if number < exp(-1*float(current_length)/(float(MAX_LENGTH))):
                         #Requests a non-terminal production
+                        #print(stringGen)
                         stringGen[index:index] = getProductions(stringGen.pop(index)['non_term'], "nonfinal")['production']
                     else:
                         #Requests a terminal production
+                        #print(stringGen)
                         stringGen[index:index] = getProductions(stringGen.pop(index)['non_term'], "final")['production']
                     current_length = getStringLength(stringGen)
                 index += 1
