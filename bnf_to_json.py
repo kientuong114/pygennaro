@@ -2,37 +2,11 @@ import sys
 import re
 import json
 
-SCRIPT_NAME, BNF_FILE, OUTPUT_FILE, RULE_NAME, VERSION, AUTHOR = sys.argv 
-
 SEPARATOR_CHAR = "|"
-
-#Initializes the resulting json dict
-result = {
-            "name": RULE_NAME,
-            "version": VERSION,
-            "author": AUTHOR,
-            "rules":{}
-        }
-
-#Reads all lines from input and splits between the left-hand side and the right-hand side
-bnf_content = [line.split("::=") for line in list(filter(lambda x: x[0]!="#", list(filter(lambda x: len(x)!=0, [line.strip('\n') for line in open(BNF_FILE)]))))]
-
-print(bnf_content)
-
-#Splits all the lines with the separator
-for production in bnf_content:
-    print(production)
-    production[1] = production[1].split(SEPARATOR_CHAR)
 
 #Initializes the rules dict
 production = {}
-
-def getType(prod):
-    #If there are any non-terminal characters returns nonfinal, returns final otherwise
-    if prod.find("<")!=-1:
-        return "nonfinal"
-    else:
-        return "final"
+result = {}
 
 def formatNonTerminal(productionArr):
     #Splits each right-hand side into the terminal and non terminal characters and creates an array
@@ -51,18 +25,56 @@ def formatNonTerminal(productionArr):
         production.append(productionArr[lastDelimiter:])
     return production
 
-def generateRules():
-    for line in bnf_content:
+def generateRules(inputList):
+    for line in inputList:
         listOfProductions = []
         for rightProd in line[1]:
-            listOfProductions.append({"production": formatNonTerminal(rightProd.replace("\"", "")), "type": getType(rightProd)})
+            listOfProductions.append({"production": formatNonTerminal(rightProd), "type": getType(rightProd)})
         production[line[0]] = listOfProductions
     result['rules'] = production
 
-def printJson():
-    with open(OUTPUT_FILE, 'w') as output_file:
+def printJson(out_file):
+    with open(out_file, 'w') as output_file:
         json.dump(result, output_file, indent=8)
 
+def getType(prod):
+    #If there are any non-terminal characters returns nonfinal, returns final otherwise
+    if prod.find("<")!=-1:
+        return "nonfinal"
+    else:
+        return "final"
+
+def getArgs():
+    if len(sys.argv) == 6:
+        SCRIPT_NAME, BNF_FILE, OUTPUT_FILE, RULE_NAME, VERSION, AUTHOR = sys.argv 
+    else:
+        SCRIPT_NAME, BNF_FILE, OUTPUT_FILE = sys.argv
+        RULE_NAME = "Unknown"
+        VERSION = "v1.0"
+        AUTHOR = "John Doe"
+    return BNF_FILE, OUTPUT_FILE, RULE_NAME, VERSION, AUTHOR
+
+def init(inputFile, ruleName, version, author):
+    #Initializes the resulting json dict
+    result = {
+                "name": ruleName,
+                "version": version,
+                "author": author,
+                "rules":{}
+            }
+
+    #Reads all lines from input and splits between the left-hand side and the right-hand side
+    bnf_content = list([line.split("::=") for line in list(filter(lambda x: x[0]!="#", list(filter(lambda x: len(x)!=0, [line.strip('\n') for line in open(inputFile)]))))])
+
+    #Splits all the lines with the separator
+    for production in bnf_content:
+        print(production)
+        production[1] = production[1].split(SEPARATOR_CHAR)
+    
+    return bnf_content
+
 if __name__ == "__main__":
-    generateRules()
-    printJson()
+    inputFile, outputFile, ruleName, version, author = getArgs()
+    inputList = init(inputFile, ruleName, version, author)
+    generateRules(inputList)
+    printJson(outputFile)

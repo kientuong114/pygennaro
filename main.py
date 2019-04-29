@@ -13,7 +13,7 @@ from functools import reduce
 from math import exp
 
 #Set here the file from which the grammar productions are loaded
-RULES_FILE = "gio.json"
+RULES_FILE = "out.json"
 
 #Some constants
 MAX_LENGTH = 3000
