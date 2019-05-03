@@ -13,7 +13,7 @@ from functools import reduce
 from math import exp
 
 #Set here the file from which the grammar productions are loaded
-RULES_FILE = "out.json"
+RULES_FILE = "customrules/fulvio2.json"
 
 #Some constants
 MAX_LENGTH = 3000
@@ -49,6 +49,7 @@ def getProductions(non_term, isFinal="NULL"):
                     select = random.choice(rules)
                 #print("Selected: ", select)
                 return select
+    raise Exception('Left hand side not found. No such element as \"'+non_term+'\"')
 
 def stringGenerate(stringArray):
     #Collapses the array into a string
