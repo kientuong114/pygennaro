@@ -24,11 +24,11 @@ The BNF file is a text file which contains all the productions of the grammar.
 Comments start with "#": these lines, along with empty lines, will be ignored
 The format is typical of the Backus-Naur form. For example:
 
-Left-hand side::="First production"|"Second "<any non terminal character>"production"|"Third production"
+Left-hand side::=First production|Second <any non terminal character> production|Third production
 
 The number of production is variable and can be indefinitely large. Each production must be separated by a "|" character (This can be changed in the bnf_to_json.py file)
 
-Note that the left-hand side does not have quotes around, while terminal pieces of the production must be sorrounded by double quotes.
+Note that the left-hand side does not have quotes nor brackets around.
 Non terminal pieces must be sorrounded by angled brackets.
 
 ### How to Use
@@ -36,14 +36,13 @@ Non terminal pieces must be sorrounded by angled brackets.
 **Step 1**: Write the bnf file with the specifications of the precedent section. Take a look at the "bnf_example.txt" file if you want an example
 **Step 2**: To convert the BNF file to json give the following arguments in the command, following the script name:
 
-OUTPUT_FILE, NAME_OF_GRAMMAR (Can be anything you like), VERSION (same as before), AUTHOR
+OUTPUT_FILE, NAME_OF_GRAMMAR (Optional), VERSION (Optional), AUTHOR (Optional)
 
 e.g. "python3 bnf_to_json.py output.txt "Test Grammar" "v2.3" "John Doe"
 
-**Step 3**: Open the "main.py" file with a text editor and change the input file in the constants
-**Step 4**: Call the main.py program and it will output a string from the grammar
+**Step 3**: Open the "stringGenerator.py" file with a text editor and change the input file in the constants
+**Step 4**: Call the stringGenerator.py program and it will output a string from the grammar
 
 ### Additional Things
 
-- Call the method "debugGenerate()" to check the average length of the string. It will generate 1000 strings of the grammar and calculate the average size
-- Call the metod "printInfo()" to see some information about the json file
+- Change DEBUG_MODE to True to check the average length of the string. It will generate 1000 strings of the grammar and calculate the average size. This will also print additional informations about the rules.
