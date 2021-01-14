@@ -138,13 +138,13 @@ The currently implemented metacharacters are as follows:
 
 | Character | Effect |
 | --------- | ------ |
-| `!`       | Capitalize the first letter of the string ("hello" -> "Hello") |
-| `^`       | Render the string in uppercase ("hello" -> "HELLO") |
+| `^`       | Capitalize the first letter of the string ("hello" -> "Hello") |
+| `!`       | Render the string in uppercase ("hello" -> "HELLO") |
 
 For instance, suppose we had the following set of rules:
 
 ```
-S::=Fairly oddparents! <thing>|Fairly oddparents! <^thing> (but screaming)
+S::=Fairly oddparents! <thing>|Fairly oddparents! <!thing> (but screaming)
 thing::=obtuse|rubber goose|green moose|guava juice
 ```
 
@@ -157,3 +157,8 @@ Fairly oddparents! rubber goose
 
 Fairly oddparents! RUBBER GOOSE (but screaming)
 ```
+
+Why PyGennaro?
+--------------
+
+Because it **gen**erates strings and because "Gennaro" is an Italian name, so I thought it would be funny.
