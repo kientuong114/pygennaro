@@ -1,8 +1,81 @@
-# Context-Free Grammar Generator
+PyGennaro
+==========
 
-This small script takes in a json with a context-free grammar rules and returns a random string generated from that grammar
+BNF parsing, formal grammar conversion and string generation utilities
 
-### A Short Preamble about Grammars
+------------------------------------------------------------------------
+
+Do you want to automagically write tweets? Are you also bad at machine learning and do not want to spend hours training a model?
+
+Look no further, for **PyGennaro** is here! PyGennaro is a grammar parser, which constructs an internal model of the grammar and can use that to generate random strings which belong to that grammar.
+
+Using it is as easy as creating a file:
+
+```
+# rules.bnf
+
+S::=Easy as <S1>!
+S1::=pie|spy|cry|lie|fly
+```
+
+and then running the command:
+
+```
+$ pygennaro rules.bnf
+> Easy as pie!
+$ pygennaro rules.bnf
+> Easy as lie!
+$ pygennaro rules.bnf
+> Easy as spy!
+```
+
+PyGennaro runs standalone and does not require any external library.
+
+Table of Contents
+-----------------
+1. [Installation](#installation)
+2. [Usage](#usage)
+3. [About Formal Grammars](#about-formal-grammars)
+4. [BNF File Format](#bnf-file-format)
+5. [BNF Metacharacters](#bnf-metacharacters)
+
+Installation
+------------
+
+Currently the PyGennaro console command can be installed with pip:
+
+```
+$ pip install pygennaro
+```
+
+Or, alternatively, from the wheels file:
+
+```
+$ pip install pygennaro-0.1.0-py3-none-any.whl
+```
+
+
+Usage
+-----
+
+```
+usage: pygennaro [-h] [-l L] [--json] [-i N] [--attempts N] input_file
+
+Context free grammar generator which takes a BNF grammar and outputs a string from that grammar
+
+positional arguments:
+  input_file        Input file in BNF
+
+optional arguments:
+  -h, --help        show this help message and exit
+  -l L, --length L  Maximum length allowed for the generated string
+  --json            The program will output the BNF in json form instead of outputting a string
+  -i N, --indent N  JSON indentation spaces. Only makes sense with the --json option
+  --attempts N      Maximum attempts for generating the string. Will throw an exception if all attempts are unsuccessful
+```
+
+About Formal Grammars
+---------------------
 
 Formally, a grammar is a tuple (T,N,S,P) where:
 
@@ -14,35 +87,73 @@ Formally, a grammar is a tuple (T,N,S,P) where:
 
 In a context free grammar, A is composed of a single non-terminal character and B can be any string composed of Terminal and Non-Terminal characters
 A grammar generates strings by replacing non-terminal characters that match the left-hand side of a production with the relative right-hand side.
-When the string is entirely composed of terminal characters, the generation stops and the resulting string is one of the many possible strings contained in
-the language that the grammar can produce.
 
-### BNF File Format
+For instance with the following rules:
+
+```
+(1) S -> a
+(2) S -> A
+(3) S -> B
+(4) A -> cS
+(5) B -> d
+(6) B -> dB
+```
+
+(The first 3 rules are equivalent to `S -> a | A | B`)
+
+Then we could, for example have the following sequence of derivations:
+
+```
+S -> A -> cS -> cA -> ccS -> ccB -> ccdB -> ccddB -> ccddd
+```
+
+Where, respectively, the rules 2, 4, 2, 4, 3, 6, 6, 5 were used. Note that rules do not necessarily have to be used (for example rule 1).
+
+When the string is entirely composed of terminal characters, the generation stops and the resulting string is one of the many possible strings contained that the grammar can produce. This process is non-deterministic. The set of all possible strings that the grammar can produce is its language.
+
+BNF File Format
+---------------
 
 The BNF file is a text file which contains all the productions of the grammar.
 
 Comments start with "#": these lines, along with empty lines, will be ignored
 The format is typical of the Backus-Naur form. For example:
 
-Left-hand side::=First production|Second <any non terminal character> production|Third production
+```
+Var::=First thing!|Second <Var> thing!|<Other>
+Other::=Stuff!
+```
 
-The number of production is variable and can be indefinitely large. Each production must be separated by a "|" character (This can be changed in the bnf_to_json.py file)
+Multiple productions which share the same LHS can be merged into a single line, separated by pipe character `|`
 
-Note that the left-hand side does not have quotes nor brackets around.
-Non terminal pieces must be sorrounded by angled brackets.
+Non terminal pieces must be sorrounded by angled brackets. Also notice that spaces are relevant and will be included in the productions.
 
-### How to Use
+BNF Metacharacters
+------------------
 
-**Step 1**: Write the bnf file with the specifications of the precedent section. Take a look at the "bnf_example.txt" file if you want an example
-**Step 2**: To convert the BNF file to json give the following arguments in the command, following the script name:
+To facilitate the writing of the set of rules, there is the possibility of using metacharacters inside non-terminals in the BNF.
+These metacharacters describe how the terminals should appear, after substitution of the non-terminal.
 
-OUTPUT_FILE, NAME_OF_GRAMMAR (Optional), VERSION (Optional), AUTHOR (Optional)
+The currently implemented metacharacters are as follows:
 
-e.g. "python3 bnf_to_json.py output.txt "Test Grammar" "v2.3" "John Doe"
+| Character | Effect |
+| --------- | ------ |
+| `!`       | Capitalize the first letter of the string ("hello" -> "Hello") |
+| `^`       | Render the string in uppercase ("hello" -> "HELLO") |
 
-**Step 3**: Open the "stringGenerator.py" file with a text editor and change the input file in the constants
-**Step 4**: Call the stringGenerator.py program and it will output a string from the grammar
+For instance, suppose we had the following set of rules:
 
-### Additional Things
+```
+S::=Fairly oddparents! <thing>|Fairly oddparents! <^thing> (but screaming)
+thing::=obtuse|rubber goose|green moose|guava juice
+```
 
-- Change DEBUG_MODE to True to check the average length of the string. It will generate 1000 strings of the grammar and calculate the average size. This will also print additional informations about the rules.
+This allows for us to use all of the possible substitutions in `thing` both in lowercase and in uppercase, without having to rewrite them twice.
+
+Thus, both of these are valid strings generated by the grammar:
+
+```
+Fairly oddparents! rubber goose
+
+Fairly oddparents! RUBBER GOOSE (but screaming)
+```
